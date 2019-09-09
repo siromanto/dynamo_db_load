@@ -1,19 +1,8 @@
-## How to start script:
-##### Recuirements:
-- Python 3.6.5
-- AWS CLI
-#### SET UP:
-- `python -m venv .venv` 
-- `source .venv/bin/activate`
-- `pip install -r requirements.txt`
+from etl import load, transform
 
-and execute `run.py`
-#### Configs:
-File and db names discribed in configs/config.py file
-#### AWS credentials:
-Make sure, you set up aws credentials into `aws configure`
-    
-## Script parts    
+from configs.config import ORIGIN_FILE, TRANSFORMED_FILE
+
+"""
     Transform:
         The original dataset has more than 65k rows and hasn't date field.
         This script create transformed csv file with:
@@ -21,6 +10,13 @@ Make sure, you set up aws credentials into `aws configure`
          - takes the number of rows specified in orig_rows parameter
          - duplicate each original record by repeat counts
          
-    Load:
+     Load:
         Load data into dynamodb table
         
+    File and db names described in configs/config.py file
+"""
+
+
+if __name__ == '__main__':
+    transform.transform_csv(ORIGIN_FILE, TRANSFORMED_FILE, rows=300, repeat=10)
+    load.load_data()
