@@ -1,53 +1,48 @@
 import csv
 import boto3
-import csv
 
-# def load():
-#     dynampdb = boto3.resource('dynamodb')
-#     db = dynampdb.Table('dataset_tes_load')
-#
-#     # db.put_item(
-#     #     Item={
-#     #         'connectionId': '42',
-#     #         'orgId': '42'
-#     #     }
-#     # )
+from configs.config import TRANSFORMED_FILE, DB_TABLE_NAME
 
 
-dynampdb = boto3.resource('dynamodb')
-
-def batch_write(table_name, rows):
-    table = dynampdb.Table(table_name)
-
-    with table.batch_writer() as batch:
-        for row in rows:
-            batch.put_item(Item=row)
-    return True
+def create_client_connection():
+    dynampdb = boto3.resource('dynamodb')
+    db = dynampdb.Table(DB_TABLE_NAME)
+    print('CONNECT TO DYNAMODB...')
+    return db
 
 
-def read_csv(csv_file, litems_ist):
-    rows = csv.DictReader(open(csv_file))
+def get_rows_from_csv():
+    items_list = []
 
-
+    print('GET DATA FROM CSV FILE...')
+    rows = csv.DictReader(open(TRANSFORMED_FILE))
     for row in rows:
-        print(len(dict(row)))
-        litems_ist.append(row)
+        items_list.append(row)
+
+    print(f'ROWS COUNT... {len(items_list)}')
+    return items_list
 
 
-def get_item():
-    client = boto3.client('dynamodb')
-    response = client.get_item(TableName='cancer_dataset_load', Key={'patient_nbr': {'S': str('8222157')}})
-    print(response)
+def write_into_db(items):
+    db = create_client_connection()
+
+    try:
+        with db.batch_writer() as batch:
+            for row in items:
+                print(f"LOAD ROW - encounter_id: {dict(row.items()).get('encounter_id')}, "
+                      f"date: {dict(row.items()).get('generated_date')}")
+                batch.put_item(Item=row)
+        print(f'LOADED {len(items)} ROWS...')
+    except Exception as e:
+        print(f'Error: {e}')
+
+
+def load_data():
+    prepared_rows = get_rows_from_csv()
+    write_into_db(prepared_rows)
 
 
 if __name__ == '__main__':
-    table_name = 'cancer_dataset_load'
-    file_name = '../data/transformed_data.csv'
-    items = []
-
-    read_csv(file_name, items)
-    # print(items)
-    status = batch_write(table_name, items)
-    # get_item()
+    load_data()
 
 
