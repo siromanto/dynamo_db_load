@@ -34,6 +34,4 @@ venv/
 .DS_Store
 .idea
 
-# Ignore docker-compose folders
-dags/data/
-.odcvs_dockerdata/
+data/transformed_data.csv
