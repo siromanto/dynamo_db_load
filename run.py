@@ -1,6 +1,6 @@
-from etl import load, transform
+from etl import extract, transform, load
 
-from configs.config import ORIGIN_FILE, TRANSFORMED_FILE
+from configs.config import KAGGLE_URL,KEY_FILE, ORIGIN_FILE, TRANSFORMED_FILE
 
 """
     Transform:
@@ -18,5 +18,6 @@ from configs.config import ORIGIN_FILE, TRANSFORMED_FILE
 
 
 if __name__ == '__main__':
+    extract.extract_csv(KAGGLE_URL, KEY_FILE)
     transform.transform_csv(ORIGIN_FILE, TRANSFORMED_FILE, rows=300, repeat=10)
     load.load_data()

@@ -2,7 +2,6 @@ import re
 import json
 import sys
 import os
-import requests
 import wget
 from configs.helper import get_parsed_page
 from definitions import ROOT_DIR
@@ -10,8 +9,8 @@ from definitions import ROOT_DIR
 
 def extract_csv(url, key_file=None):
     csv_links = scrape_site(url)
-    print(csv_links)
-    print('test')
+    print(f'Number of links available for download --- {len(csv_links)}')
+    print(f'Key file name --- {key_file}')
     target_link = ''
 
     if len(csv_links) < 1:
@@ -21,13 +20,6 @@ def extract_csv(url, key_file=None):
         target_link = find_target_link(csv_links, key_file)
 
     download_data_file(target_link)
-
-
-
-
-    # target_link = find_target_link(csv_links, key_file)
-    print(target_link)
-
 
 
 def download_data_file(url):
@@ -55,11 +47,6 @@ def parse_file_name(url):
         return 'kaggle_data.csv'
 
 
-
-def get_data():
-    pass
-
-
 def find_target_link(links_list, key_file):
     if key_file:
         target_link = ''
@@ -80,7 +67,6 @@ def find_target_link(links_list, key_file):
 
 def scrape_site(url):
     soup = get_parsed_page(url)
-    # print(soup)
     data_links = get_parse_data(soup)
 
     csv_links = []
