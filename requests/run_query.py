@@ -18,12 +18,14 @@ class DecimalEncoder(json.JSONEncoder):
 def get_data(hostname, table_name, partition_key, search_value):
     table = create_client_connection(table_name=table_name)
     data = get_query(table, partition_key, search_value)
-    print(data[0])
     send_response(hostname, data[0])
 
 
 def send_response(host, data):
-    r = requests.post(host, data=data)
+    try:
+        r =requests.post(host, data=data)
+    except requests.exceptions.HTTPError as e:
+        return "Error: " + str(e)
 
 
 def get_query(table, partition_key, search_value):
@@ -34,7 +36,7 @@ def get_query(table, partition_key, search_value):
     except Exception as e:
         print(e)
 
-    data = response.get('Items')
+    data = response.get('Items')[0]
     return data
 
 
