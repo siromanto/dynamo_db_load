@@ -1,6 +1,5 @@
 from __future__ import print_function
 import json
-import requests
 import decimal
 from boto3.dynamodb.conditions import Key, Attr
 
@@ -15,17 +14,10 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(o)
 
 
-def get_data(hostname, table_name, partition_key, search_value):
+def get_data(table_name, partition_key, search_value):
     table = create_client_connection(table_name=table_name)
     data = get_query(table, partition_key, search_value)
-    send_response(hostname, data[0])
-
-
-def send_response(host, data):
-    try:
-        r =requests.post(host, data=data)
-    except requests.exceptions.HTTPError as e:
-        return "Error: " + str(e)
+    print(data)
 
 
 def get_query(table, partition_key, search_value):
@@ -40,7 +32,5 @@ def get_query(table, partition_key, search_value):
     return data
 
 
-
-
 if __name__ == '__main__':
-    get_data(hostname='127.0.0.1:8089', table_name='temp_for_load', partition_key='encounter_id', search_value='964548')
+    get_data(table_name='temp_for_load', partition_key='encounter_id', search_value='964548')
