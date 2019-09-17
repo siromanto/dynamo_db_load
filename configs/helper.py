@@ -1,5 +1,13 @@
+import boto3
 import requests
 from bs4 import BeautifulSoup
+
+
+def create_client_connection(table_name):
+    dynampdb = boto3.resource('dynamodb')
+    db = dynampdb.Table(table_name)
+    print('CONNECT TO DYNAMODB...')
+    return db
 
 
 def get_parsed_page(url):
@@ -20,7 +28,7 @@ def get_page_html(url):
                 print('RESPONSE FROM SITE: Job is expired. Find your next job and advance your career today')
                 return 'na'
             else:
-                raise Exception('Invalid url from parsed vacancy')
+                raise Exception('Invalid url from parsed url')
     else:
         response = r.text
         return response

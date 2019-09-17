@@ -4,6 +4,7 @@ import boto3
 from configs.config import TRANSFORMED_FILE, DB_TABLE_NAME
 
 
+# TODO: refactor this and change config file
 def create_client_connection():
     dynampdb = boto3.resource('dynamodb')
     db = dynampdb.Table(DB_TABLE_NAME)
